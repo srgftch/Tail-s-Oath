@@ -41,3 +41,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: backgr
+    uniqueID: 1376680687
+    locked: 0
+  - name: decorback
+    uniqueID: 3184059027
+    locked: 0
+  - name: Collision
+    uniqueID: 2596171225
+    locked: 0
+  - name: player
+    uniqueID: 33031367
+    locked: 0
+  - name: behind
+    uniqueID: 1258841219
+    locked: 0
