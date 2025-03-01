@@ -13,20 +13,18 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Inbentory",
+                    "type": "Button",
+                    "id": "fbbf2db1-2c9d-4e4e-9254-df022ab7e461",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
-                {
-                    "name": "",
-                    "id": "845845e7-8387-4d54-8def-daea5cecb8ea",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
                 {
                     "name": "WASD",
                     "id": "bfcc5839-2ca5-49ce-b860-8fffaeb97226",
@@ -81,6 +79,17 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "14b0acc8-bfae-4cbf-9c9b-5658831c8a1f",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Inbentory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

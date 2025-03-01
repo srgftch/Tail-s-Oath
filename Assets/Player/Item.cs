@@ -10,4 +10,8 @@ public class Item : ScriptableObject
     public Sprite icon = null;         // Иконка предмета
     public bool isStackable = false;   // Можно ли стакать предмет
     public int maxStack = 1;           // Максимальное количество в стаке
+    public virtual void Use()
+    {
+
+    }
 }
