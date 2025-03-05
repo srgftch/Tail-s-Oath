@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     private GameObject inventoryUI; // Панель инвентаря
     [SerializeField]
     private GameObject ActionUI; // Надпись возможности действия
+    private bool canActive = false; // Возможность нажать действие
     private bool isInventoryOpen = false;
 
     [Header("Параметры здоровья")]
@@ -110,6 +111,23 @@ public class Player : MonoBehaviour
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.tag.Equals("interactive"))
+        {
+            ActionUI.SetActive(true);
+            canActive = true;
+        }
+    }
+    public void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag.Equals("interactive"))
+        {
+            canActive = false;
+            ActionUI.SetActive(false);
+        }
+    }
+
+    public void Action(InputAction.CallbackContext context, Collider2D collision)
+    {
+        if (canActive == true && context.performed)
         {
             collision.gameObject.GetComponent<InteractiveObject>().action();
         }
