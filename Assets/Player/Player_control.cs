@@ -16,11 +16,18 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private GameObject inventoryUI; // Панель инвентаря
+    [SerializeField]
+    private GameObject ActionUI; // Надпись возможности действия
     private bool isInventoryOpen = false;
+
+    [Header("Параметры здоровья")]
+    private int maxHP = 100; // Максимальное ХП
+    private int currentHP;  // Текущее ХП
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        currentHP = maxHP;
     }
 
     void Update()
@@ -100,4 +107,38 @@ public class Player : MonoBehaviour
         canMove = true; // После закрытия разрешаем движение
     }
 
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag.Equals("interactive"))
+        {
+            collision.gameObject.GetComponent<InteractiveObject>().action();
+        }
+    }
+
+    // Получение урона
+    public void TakeDamage(int damage)
+    {
+        currentHP -= damage;
+        if (currentHP < 0) currentHP = 0;
+
+        Debug.Log($"Игрок получил {damage} урона. HP: {currentHP}");
+
+        if (currentHP == 0)
+        {
+            Die();
+        }
+    }
+    public void Heal(int healAmount)
+    {
+        currentHP += healAmount;
+        if (currentHP > maxHP) currentHP = maxHP;
+
+        Debug.Log($"Игрок вылечился на {healAmount}. HP: {currentHP}");
+    }
+    
+    private void Die()
+    {
+        Debug.Log("Игрок погиб!");
+        currentHP = maxHP;
+    }
 }
