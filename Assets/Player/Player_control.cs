@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField]
     private float speed = 5f;
-    private bool canMove = true; // Флаг возможности движения
+    private bool canMove = true; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     private Rigidbody2D rb;
     private Vector2 move;
@@ -15,15 +15,25 @@ public class Player : MonoBehaviour
     private Animator animator;
 
     [SerializeField]
-    private GameObject inventoryUI; // Панель инвентаря
+    private GameObject inventoryUI; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     [SerializeField]
-    private GameObject ActionUI; // Надпись возможности действия
-    private bool canActive = false; // Возможность нажать действие
+    private GameObject ActionUI; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    private bool canActive = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     private bool isInventoryOpen = false;
 
-    [Header("Параметры здоровья")]
-    private int maxHP = 100; // Максимальное ХП
-    private int currentHP;  // Текущее ХП
+    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
+    private int maxHP = 100; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ
+    private int currentHP;  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ
+
+    [SerializeField] private int attackDamage = 20; // РЈСЂРѕРЅ РѕС‚ Р°С‚Р°РєРё
+    [SerializeField] private float attackRange = 1.5f; // Р Р°РґРёСѓСЃ Р°С‚Р°РєРё
+    [SerializeField] private Transform attackPoint; // РўРѕС‡РєР°, РёР· РєРѕС‚РѕСЂРѕР№ РёРґС‘С‚ СѓРґР°СЂ
+
+    [SerializeField] private float attackCooldown = 1f; // Р’СЂРµРјСЏ РјРµР¶РґСѓ Р°С‚Р°РєР°РјРё
+    private float nextAttackTime = 0f;
+
+    [SerializeField] private LayerMask enemyLayer; // РЎР»РѕР№ РІСЂР°РіРѕРІ
+
 
     void Start()
     {
@@ -41,12 +51,46 @@ public class Player : MonoBehaviour
         {
             rb.velocity = Vector2.zero;
         }
+
+
+
+        if (Time.time >= nextAttackTime)
+        {
+            if (Input.GetKeyDown(KeyCode.Space)) // РђС‚Р°РєР° РїРѕ РЅР°Р¶Р°С‚РёСЋ РєР»Р°РІРёС€Рё
+            {
+                Attack();
+                nextAttackTime = Time.time + attackCooldown;
+            }
+        }
+
     }
+
+    private void Attack()
+    {
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
+
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            if (enemy.TryGetComponent(out EnemySpiderHP enemyHealth))
+            {
+                enemyHealth.TakeDamage(attackDamage);
+                Debug.Log($"РРіСЂРѕРє СѓРґР°СЂРёР» РІСЂР°РіР° РЅР° {attackDamage} СѓСЂРѕРЅР°!");
+            }
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null) return;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
 
     [ContextMenu("Move")]
     public void Move(InputAction.CallbackContext context)
     {
-        if (!canMove) return; // Блокируем движение при открытом инвентаре
+        if (!canMove) return; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
         animator.SetBool("isMoving", true);
         if (context.canceled)
@@ -65,47 +109,47 @@ public class Player : MonoBehaviour
     {
         if (context.performed)
         {
-            if (!isInventoryOpen) // Открываем инвентарь
+            if (!isInventoryOpen) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             {
                 StartCoroutine(ShowInventoryAfterAnimation());
             }
-            else // Закрываем инвентарь
+            else // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             {
                 StartCoroutine(HideInventoryBeforeAnimation());
             }
 
-            canMove = false; // Запрещаем движение во время анимации
+            canMove = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         }
     }
 
-    // Ожидаем анимацию перед включением инвентаря
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     private IEnumerator ShowInventoryAfterAnimation()
     {
-        animator.SetBool("isInventoryOpen", true); // Запускаем анимацию открытия
+        animator.SetBool("isInventoryOpen", true); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-        // Ждем один кадр, чтобы Animator обновил состояние
+        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ Animator пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         yield return null;
 
-        // Ждем, пока анимация проиграется
+        // пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
 
-        inventoryUI.SetActive(true); // Включаем UI после завершения анимации
+        inventoryUI.SetActive(true); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         isInventoryOpen = true;
     }
 
-    // Закрываем UI перед проигрыванием анимации
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     private IEnumerator HideInventoryBeforeAnimation()
     {
-        inventoryUI.SetActive(false); // Сначала выключаем UI
-        animator.SetBool("isInventoryOpen", false); // Запускаем анимацию закрытия
-        // Ждем один кадр, чтобы Animator обновил состояние
+        inventoryUI.SetActive(false); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI
+        animator.SetBool("isInventoryOpen", false); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ Animator пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         yield return null;
 
-        // Ждем, пока анимация проиграется
+        // пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
 
         isInventoryOpen = false;
-        canMove = true; // После закрытия разрешаем движение
+        canMove = true; // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     }
 
     public void OnTriggerEnter2D(Collider2D collision)
@@ -133,13 +177,13 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Получение урона
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     public void TakeDamage(int damage)
     {
         currentHP -= damage;
         if (currentHP < 0) currentHP = 0;
 
-        Debug.Log($"Игрок получил {damage} урона. HP: {currentHP}");
+        Debug.Log($"пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ {damage} пїЅпїЅпїЅпїЅпїЅ. HP: {currentHP}");
 
         if (currentHP == 0)
         {
@@ -151,12 +195,12 @@ public class Player : MonoBehaviour
         currentHP += healAmount;
         if (currentHP > maxHP) currentHP = maxHP;
 
-        Debug.Log($"Игрок вылечился на {healAmount}. HP: {currentHP}");
+        Debug.Log($"пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ {healAmount}. HP: {currentHP}");
     }
     
     private void Die()
     {
-        Debug.Log("Игрок погиб!");
+        Debug.Log("пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ!");
         currentHP = maxHP;
     }
 }
