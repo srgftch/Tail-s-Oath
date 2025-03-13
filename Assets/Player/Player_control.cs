@@ -6,6 +6,9 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     [SerializeField]
+    private bool reloadPos = false;
+
+    [SerializeField]
     private float speed = 5f;
     private bool canMove = true; // ���� ����������� ��������
 
@@ -39,6 +42,11 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         currentHP = maxHP;
+        int isPosAval = PlayerPrefs.GetInt(PlayerConsts.RESTART_POS_AVALAIB);
+        if (reloadPos && isPosAval == 1)
+        {
+            gameObject.transform.position = loadRestartPos();
+        }
     }
 
     void Update()
@@ -159,6 +167,10 @@ public class Player : MonoBehaviour
             ActionUI.SetActive(true);
             canActive = true;
         }
+        if (collision.gameObject.tag.Equals("Door"))
+        {
+            collision.gameObject.GetComponent<InteractiveObject>().action();
+        }
     }
     public void OnTriggerExit2D(Collider2D collision)
     {
@@ -202,5 +214,12 @@ public class Player : MonoBehaviour
     {
         Debug.Log("����� �����!");
         currentHP = maxHP;
+    }
+    private Vector2 loadRestartPos()
+    {
+        return new Vector2(
+            PlayerPrefs.GetFloat(PlayerConsts.X_RESTART_POS),
+            PlayerPrefs.GetFloat(PlayerConsts.Y_RESTART_POS)
+            );
     }
 }
