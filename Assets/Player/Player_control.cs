@@ -33,7 +33,10 @@ public class Player : MonoBehaviour
 
     [SerializeField] private int attackDamage = 20; // Урон от атаки
     [SerializeField] private float attackRange = 1.5f; // Радиус атаки
-    [SerializeField] private Transform attackPoint; // Точка, из которой идёт удар
+    [SerializeField] private Transform attackPointLeft; // Точки, из которых идёт удар
+    [SerializeField] private Transform attackPointRight;
+    [SerializeField] private Transform attackPointUp;
+    [SerializeField] private Transform attackPointDown;
 
     [SerializeField] private float attackCooldown = 1f; // Время между атаками
     private float nextAttackTime = 0f;
@@ -65,20 +68,37 @@ public class Player : MonoBehaviour
 
 
 
-        if (Time.time >= nextAttackTime)
+    }
+    public void AttackInput(InputAction.CallbackContext context)
+    {
+        if (context.performed && Time.time >= nextAttackTime) // Проверка, чтобы атака происходила только при нажатии и с учетом кулдауна
         {
-            if (Input.GetKeyDown(KeyCode.Space)) // Атака по нажатию клавиши
-            {
-                Attack();
-                nextAttackTime = Time.time + attackCooldown;
-            }
+            Attack(); // Вызываем метод атаки
+            nextAttackTime = Time.time + attackCooldown; // Обновляем время следующей атаки
         }
-
     }
 
     private void Attack()
     {
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
+        animator.SetTrigger("Attack");
+
+        // Получаем направление атаки
+        (float, float) direction = (
+            Mathf.RoundToInt(animator.GetFloat("lastX")),
+            Mathf.RoundToInt(animator.GetFloat("lastY"))
+        );
+
+        // Переменная для хранения списка врагов
+        Collider2D[] hitEnemies = direction switch
+        {
+            (1, 0) => Physics2D.OverlapCircleAll(attackPointRight.position, attackRange, enemyLayer),
+            (-1, 0) => Physics2D.OverlapCircleAll(attackPointLeft.position, attackRange, enemyLayer),
+            (0, 1) => Physics2D.OverlapCircleAll(attackPointUp.position, attackRange, enemyLayer),
+            (0, -1) => Physics2D.OverlapCircleAll(attackPointDown.position, attackRange, enemyLayer),
+            _ => new Collider2D[0] // Если направление неизвестно, не атакуем
+        };
+
+
 
         foreach (Collider2D enemy in hitEnemies)
         {
@@ -92,9 +112,12 @@ public class Player : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        if (attackPoint == null) return;
+        if (attackPointRight == null) return;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        Gizmos.DrawWireSphere(attackPointRight.position, attackRange);
+        Gizmos.DrawWireSphere(attackPointLeft.position, attackRange);
+        Gizmos.DrawWireSphere(attackPointUp.position, attackRange);
+        Gizmos.DrawWireSphere(attackPointDown.position, attackRange);
     }
 
 
@@ -113,6 +136,11 @@ public class Player : MonoBehaviour
         move = context.ReadValue<Vector2>();
         animator.SetFloat("inputX", move.x);
         animator.SetFloat("inputY", move.y);
+        if (move.sqrMagnitude > 0) // Если есть движение
+        {
+            animator.SetFloat("lastX", move.x);
+            animator.SetFloat("lastY", move.y);
+        }
     }
 
     [ContextMenu("PlayerInventory")]
@@ -136,6 +164,9 @@ public class Player : MonoBehaviour
     // ������� �������� ����� ���������� ���������
     private IEnumerator ShowInventoryAfterAnimation()
     {
+        move.x = 0;
+        move.y = 0;
+        animator.SetBool("isMoving", false); // Останавливаем движение
         animator.SetBool("isInventoryOpen", true); // ��������� �������� ��������
 
         // ���� ���� ����, ����� Animator ������� ���������
