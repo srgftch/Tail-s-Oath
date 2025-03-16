@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -26,6 +27,8 @@ public class Player : MonoBehaviour
 
     [Header("��������� ��������")]
     private int maxHP = 100; // ������������ ��
+    [SerializeField]
+    private Slider sliderHP;
     private int currentHP;  // ������� ��
 
     [SerializeField] private int attackDamage = 20; // Урон от атаки
@@ -193,6 +196,7 @@ public class Player : MonoBehaviour
     public void TakeDamage(int damage)
     {
         currentHP -= damage;
+        updateHealth();
         if (currentHP < 0) currentHP = 0;
 
         Debug.Log($"����� ������� {damage} �����. HP: {currentHP}");
@@ -200,6 +204,13 @@ public class Player : MonoBehaviour
         if (currentHP == 0)
         {
             Die();
+        }
+    }
+    private void updateHealth()
+    {
+        if (sliderHP.value != 0)
+        {
+            sliderHP.value = currentHP;
         }
     }
     public void Heal(int healAmount)

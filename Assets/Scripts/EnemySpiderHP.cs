@@ -12,7 +12,7 @@ public class EnemySpiderHP : MonoBehaviour
     {
         currentHealth = maxHealth;
         healthBar.maxValue = maxHealth;
-        healthBar.value = currentHealth;
+        healthBar.value = maxHealth;
     }
 
     public void TakeDamage(int damage)
