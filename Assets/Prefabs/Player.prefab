@@ -42,8 +42,11 @@ GameObject:
   - component: {fileID: 4933987636940929750}
   - component: {fileID: 8836052614677173073}
   - component: {fileID: 3375238326964474022}
-  - component: {fileID: 2495782478775592942}
   - component: {fileID: 6942479477384957312}
+  - component: {fileID: 2495782478775592942}
+  - component: {fileID: 3412843803473991614}
+  - component: {fileID: 2557524649321670381}
+  - component: {fileID: 743142138111677701}
   m_Layer: 0
   m_Name: Player
   m_TagString: player
@@ -60,7 +63,7 @@ Transform:
   m_GameObject: {fileID: 7420467350885603929}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -318.15, y: 103.04965, z: -9.918106}
+  m_LocalPosition: {x: -321.63, y: 103.04965, z: -9.918106}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -144,31 +147,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.8931885, y: 0.48446655}
   m_EdgeRadius: 0
---- !u!114 &2495782478775592942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7420467350885603929}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0277404d69f4dd408c29789b1a64dfa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  reloadPos: 0
-  speed: 5
-  animator: {fileID: 4446764631960016003}
-  inventoryUI: {fileID: 0}
-  ActionUI: {fileID: 0}
-  sliderHP: {fileID: 0}
-  attackDamage: 20
-  attackRange: 0.6
-  attackPoint: {fileID: 4750515767377566653}
-  attackCooldown: 1
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!114 &6942479477384957312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,14 +209,111 @@ MonoBehaviour:
     m_ActionId: 4cc726ba-abc9-4614-8741-d990cecba33d
     m_ActionName: Player/Action[/Keyboard/f]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3412843803473991614}
+        m_TargetAssemblyTypeName: PAttack, Assembly-CSharp
+        m_MethodName: AttackInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 98a4e403-26c6-4095-a7c8-930c60b5d788
     m_ActionName: Player/Attack[/Mouse/leftButton,/Mouse/rightButton,/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2495782478775592942}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: RollInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 0ffca6d8-7485-428e-8639-7d93fc3dedcb
+    m_ActionName: Player/Roll[/Keyboard/space]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &2495782478775592942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7420467350885603929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0277404d69f4dd408c29789b1a64dfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
+  canMove: 1
+  reloadPos: 1
+  animator: {fileID: 4446764631960016003}
+  inventoryUI: {fileID: 0}
+  ActionUI: {fileID: 0}
+  rollCooldown: 1
+  rollForce: 7
+--- !u!114 &3412843803473991614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7420467350885603929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed1c3c30a44da614398ede01da22495c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 2495782478775592942}
+  animator: {fileID: 4446764631960016003}
+  attackDamage: 20
+  attackRange: 1.5
+  attackCooldown: 1
+  attackPointLeft: {fileID: 2853410847747236567}
+  attackPointRight: {fileID: 4750515767377566653}
+  attackPointUp: {fileID: 4484625911883112520}
+  attackPointDown: {fileID: 9091685494001748993}
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!114 &2557524649321670381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7420467350885603929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcc820fd40041e447883f9f6f13b6213, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sliderHP: {fileID: 0}
+--- !u!114 &743142138111677701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7420467350885603929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1a3cf8d8469a7443a3ca27779afd4ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8064493648092608309
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,7 +324,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4750515767377566653}
   m_Layer: 0
-  m_Name: Attack point
+  m_Name: Attack point right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -524,7 +599,7 @@ Transform:
   m_GameObject: {fileID: 8662894824908872378}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.61, y: -0.34, z: 9.951334}
+  m_LocalPosition: {x: -0.65, y: -0.34, z: 9.951334}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
