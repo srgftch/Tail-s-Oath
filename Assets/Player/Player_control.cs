@@ -11,25 +11,26 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private float speed = 5f;
-    private bool canMove = true; // ���� ����������� ��������
+    private bool canMove = true; 
 
     private Rigidbody2D rb;
     private Vector2 move;
+
     [SerializeField]
     private Animator animator;
 
     [SerializeField]
-    private GameObject inventoryUI; // ������ ���������
+    private GameObject inventoryUI; 
     [SerializeField]
-    private GameObject ActionUI; // ������� ����������� ��������
-    private bool canActive = false; // ����������� ������ ��������
+    private GameObject ActionUI; 
+    private bool canActive = false; 
     private bool isInventoryOpen = false;
 
-    [Header("��������� ��������")]
-    private int maxHP = 100; // ������������ ��
+    [Header("Player health")]
+    private int maxHP = 100;
     [SerializeField]
     private Slider sliderHP;
-    private int currentHP;  // ������� ��
+    private int currentHP;  
 
     [SerializeField] private int attackDamage = 20; // Урон от атаки
     [SerializeField] private float attackRange = 1.5f; // Радиус атаки
@@ -41,8 +42,13 @@ public class Player : MonoBehaviour
     [SerializeField] private float attackCooldown = 1f; // Время между атаками
     private float nextAttackTime = 0f;
 
+    [SerializeField] private float rollCooldown = 1f;
+    private float nextRollTime = 0f;
+    [SerializeField] private float rollForce = 7f;
+
     [SerializeField] private LayerMask enemyLayer; // Слой врагов
 
+    private bool isRoll = false;
 
     void Start()
     {
@@ -59,7 +65,10 @@ public class Player : MonoBehaviour
     {
         if (canMove)
         {
-            rb.velocity = move * speed;
+            if (isRoll==false)
+            {
+                rb.velocity = move * speed;
+            }
         }
         else
         {
@@ -124,7 +133,7 @@ public class Player : MonoBehaviour
     [ContextMenu("Move")]
     public void Move(InputAction.CallbackContext context)
     {
-        if (!canMove) return; // ��������� �������� ��� �������� ���������
+        if (!canMove) return; 
 
         animator.SetBool("isMoving", true);
         if (context.canceled)
@@ -143,55 +152,89 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void RollInput(InputAction.CallbackContext context)
+    {
+        if (context.performed && Time.time >= nextRollTime)
+        {
+            Roll();
+            nextRollTime = Time.time + rollCooldown;
+        }
+    }
+
+    private void Roll()
+    {
+        if (!canMove) return;
+
+        isRoll = true;
+
+        animator.SetTrigger("Roll");
+
+        Vector2 rollDirection = new Vector2(
+            Mathf.RoundToInt(animator.GetFloat("lastX")),
+            Mathf.RoundToInt(animator.GetFloat("lastY"))
+        ).normalized;
+
+        rb.AddForce(rollDirection * rollForce, ForceMode2D.Impulse);
+
+        StartCoroutine(EndRoll());
+    }
+
+    private IEnumerator EndRoll()
+    {
+        yield return new WaitForSeconds(0.3f); // Длительность рывка
+        isRoll = false;
+    }
+
+
     [ContextMenu("PlayerInventory")]
     public void Inventory(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            if (!isInventoryOpen) // ��������� ���������
+            if (!isInventoryOpen) 
             {
                 StartCoroutine(ShowInventoryAfterAnimation());
             }
-            else // ��������� ���������
+            else
             {
                 StartCoroutine(HideInventoryBeforeAnimation());
             }
 
-            canMove = false; // ��������� �������� �� ����� ��������
+            canMove = false; 
         }
     }
 
-    // ������� �������� ����� ���������� ���������
+
     private IEnumerator ShowInventoryAfterAnimation()
     {
         move.x = 0;
         move.y = 0;
-        animator.SetBool("isMoving", false); // Останавливаем движение
-        animator.SetBool("isInventoryOpen", true); // ��������� �������� ��������
+        animator.SetBool("isMoving", false); 
+        animator.SetBool("isInventoryOpen", true); 
 
-        // ���� ���� ����, ����� Animator ������� ���������
+
         yield return null;
 
-        // ����, ���� �������� �����������
+
         yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
 
-        inventoryUI.SetActive(true); // �������� UI ����� ���������� ��������
+        inventoryUI.SetActive(true); 
         isInventoryOpen = true;
     }
 
-    // ��������� UI ����� ������������� ��������
+
     private IEnumerator HideInventoryBeforeAnimation()
     {
-        inventoryUI.SetActive(false); // ������� ��������� UI
-        animator.SetBool("isInventoryOpen", false); // ��������� �������� ��������
-        // ���� ���� ����, ����� Animator ������� ���������
+        inventoryUI.SetActive(false); 
+        animator.SetBool("isInventoryOpen", false); 
+
         yield return null;
 
-        // ����, ���� �������� �����������
+
         yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
 
         isInventoryOpen = false;
-        canMove = true; // ����� �������� ��������� ��������
+        canMove = true; 
     }
 
     public void OnTriggerEnter2D(Collider2D collision)
@@ -223,14 +266,14 @@ public class Player : MonoBehaviour
         }
     }
 
-    // ��������� �����
+
     public void TakeDamage(int damage)
     {
         currentHP -= damage;
         updateHealth();
         if (currentHP < 0) currentHP = 0;
 
-        Debug.Log($"����� ������� {damage} �����. HP: {currentHP}");
+        Debug.Log($"Get {damage} damage. HP: {currentHP}");
 
         if (currentHP == 0)
         {
