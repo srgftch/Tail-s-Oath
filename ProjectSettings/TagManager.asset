@@ -60,6 +60,9 @@ TagManager:
   - name: Collision
     uniqueID: 2596171225
     locked: 0
+  - name: DecOnDec&Coll
+    uniqueID: 2376591495
+    locked: 0
   - name: player
     uniqueID: 33031367
     locked: 0
