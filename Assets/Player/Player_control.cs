@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class Player : MonoBehaviour
+public class Player_control : MonoBehaviour
 {
     [SerializeField] private float startSpeed = 5f;
     private float currentSpeed;
@@ -277,5 +277,9 @@ public void RollInput(InputAction.CallbackContext context) // инициализ
         {
             collision.gameObject.GetComponent<InteractiveObject>().action();
         }
+    }
+    public void SpeedUp(int up)
+    {
+        speed += up;
     }
 }

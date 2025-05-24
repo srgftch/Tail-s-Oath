@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerHealth : MonoBehaviour
+public class PHealth : MonoBehaviour
 {
     [Header("Player health")]
     [SerializeField] private Slider sliderHP;
@@ -46,5 +46,13 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         Debug.Log("You die!");
+    }
+
+    public void MaxHealthUp(int up)
+    {
+        maxHP += up;
+        currentHP += up;
+        sliderHP.value = currentHP;
+        sliderHP.maxValue = maxHP;
     }
 }

@@ -8,11 +8,14 @@ public class EnemySpiderHP : MonoBehaviour
 
     [SerializeField] private Slider healthBar; // Ссылка на UI-хп бар
 
+    private Transform player;
+
     private void Start()
     {
         currentHealth = maxHealth;
         healthBar.maxValue = maxHealth;
         healthBar.value = maxHealth;
+        player = GameObject.FindGameObjectWithTag("player")?.transform;
     }
 
     public void TakeDamage(int damage)
@@ -27,7 +30,11 @@ public class EnemySpiderHP : MonoBehaviour
     }
 
     private void Die()
-    {
+    { 
+        if (player.TryGetComponent(out PExp playerScript))
+        {
+            playerScript.AddExperience(10);
+        }
         Destroy(gameObject); // Удаляем врага
     }
 }
