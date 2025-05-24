@@ -6,7 +6,13 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private float startSpeed = 5f;
+    private float currentSpeed;
+    private float currentDebuf = 0f;
+    private int hitCount = 0;
+    private bool isStunned = false;
+    private float debufTimer = 0f;
+    private float stunTimer = 0f;
     public bool canMove = true; // проверка делает ли персонаж другие действия
 
     [SerializeField] private bool reloadPos = false;
@@ -36,6 +42,7 @@ public class Player : MonoBehaviour
         {
             gameObject.transform.position = LoadRestartPos();
         }
+        currentSpeed = startSpeed;
     }
 
     void Update()
@@ -44,14 +51,55 @@ public class Player : MonoBehaviour
         {
             if (isRoll==false)
             {
-                rb.velocity = move * speed;
+                rb.velocity = move * currentSpeed;
             }
         }
         else
         {
             rb.velocity = Vector2.zero;
         }
+        if (debufTimer > 0)
+        {
+            debufTimer -= Time.deltaTime;
+            if (debufTimer <= 0)
+            {
+                ResetDebuf();
+            }
+        }
+
+        if (isStunned && stunTimer > 0)
+        {
+            stunTimer -= Time.deltaTime;
+            if (stunTimer <= 0)
+            {
+                EndStun();
+            }
+        }
     }
+    public void ApplySpiderHit() //попадание снарядом паука
+    {
+        // Сбрасываем таймер при каждом новом попадании
+        debufTimer = 13f;
+
+        if (isStunned)
+        {
+            // Если уже в стане - просто обновляем таймер
+            stunTimer = 3f;
+            return;
+        }
+
+        hitCount++;
+
+        if (hitCount >= 5)
+        {
+            StartStun();
+            return;
+        }
+
+        float debufAmount = hitCount * 0.2f;
+        ChangeSpeed(debufAmount);
+    }
+
     private Vector2 LoadRestartPos()
     {
         return new Vector2(
@@ -82,7 +130,42 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void RollInput(InputAction.CallbackContext context) // инициализация рывка
+    public void ChangeSpeed(float debuf)
+    {
+        currentDebuf = Mathf.Clamp(debuf, 0f, 0.8f);
+        currentSpeed = startSpeed * (1 - currentDebuf);
+        Debug.Log($"Текущая скорость: {currentSpeed} (дебаф: {currentDebuf * 100}%)");
+    }
+    private void StartStun()
+    {
+        isStunned = true;
+        stunTimer = 3f;
+        currentSpeed = 0;
+        Debug.Log("Игрок оглушен на 3 секунды!");
+
+        // Запускаем анимацию стана
+        // animator.SetBool("IsStunned", true);
+    }
+
+    private void EndStun()
+    {
+        isStunned = false;
+        hitCount = 2; // Возвращаем на 2 уровень дебафа
+        ChangeSpeed(0.4f);
+        Debug.Log("Стан закончился, восстановлена скорость до 60%");
+
+        // animator.SetBool("IsStunned", false);
+    }
+
+    private void ResetDebuf()
+    {
+        hitCount = 0;
+        currentDebuf = 0f;
+        currentSpeed = startSpeed;
+        Debug.Log("Дебафф скорости полностью сброшен");
+    }
+
+public void RollInput(InputAction.CallbackContext context) // инициализация рывка
     {
         if (context.performed && Time.time >= nextRollTime)
         {

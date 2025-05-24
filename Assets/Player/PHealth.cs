@@ -7,7 +7,7 @@ public class PlayerHealth : MonoBehaviour
 {
     [Header("Player health")]
     [SerializeField] private Slider sliderHP;
-    private int maxHP = 100;
+    [SerializeField] private int maxHP = 100;
     private int currentHP;
 
     private void Start()

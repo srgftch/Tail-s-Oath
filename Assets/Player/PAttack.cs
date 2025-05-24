@@ -60,7 +60,7 @@ public class PAttack : MonoBehaviour
 
         foreach (Collider2D enemy in hitEnemies)
         {
-            if (enemy.TryGetComponent(out EnemySpiderHP enemyHealth))
+            if (enemy.TryGetComponent(out Enemy enemyHealth))
             {
                 enemyHealth.TakeDamage(attackDamage);
                 Debug.Log($"Игрок ударил врага на {attackDamage} урона!");

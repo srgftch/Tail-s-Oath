@@ -32,7 +32,7 @@ public class EnemyAttack : MonoBehaviour
         if (player.TryGetComponent(out PlayerHealth playerScript))
         {
             playerScript.TakeDamage(damage);
-            Debug.Log($"Враг атаковал игрока на {damage} урона!");
+            //Debug.Log($"Враг атаковал игрока на {damage} урона!");
         }
     }
 }

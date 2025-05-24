@@ -38,7 +38,7 @@ public class EnemySpider : MonoBehaviour
             rb.velocity = Vector2.zero;
         }
     }
-
+    
     [ContextMenu("Move")]
     public void Move(InputAction.CallbackContext context)
     {
@@ -55,7 +55,7 @@ public class EnemySpider : MonoBehaviour
         animator.SetFloat("inputX", move.x);
         animator.SetFloat("inputY", move.y);
     }
-
+    /*
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag.Equals("interactive"))
@@ -77,7 +77,7 @@ public class EnemySpider : MonoBehaviour
         {
             collision.gameObject.GetComponent<InteractiveObject>().action();
         }
-    }
+    }*/
 
     // ��������� �����
     public void TakeDamage(int damage)
