@@ -9,7 +9,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float wanderRadius = 5f;
     [SerializeField] protected float minWanderDelay = 1f;
     [SerializeField] protected float maxWanderDelay = 4f;
-    [SerializeField] protected float attackFreezeDuration = 20f; // Новый параметр
+    [SerializeField] protected float idleTimeAtPoint = 1.5f;
+    [SerializeField] protected float attackFreezeDuration = 0.8f;
 
     [Header("Combat")]
     [SerializeField] protected int maxHealth = 80;
@@ -35,8 +36,10 @@ public class Enemy : MonoBehaviour
     protected float nextAttackTime;
     protected float nextWanderTime;
     protected bool isChasing;
-    protected bool isAttacking; // Новый флаг
-    protected float attackFreezeTimer; // Новый таймер
+    protected bool isAttacking;
+    protected float attackFreezeTimer;
+    protected bool isIdle;
+    protected float idleTimer;
 
     protected virtual void Start()
     {
@@ -58,13 +61,27 @@ public class Enemy : MonoBehaviour
     {
         if (player == null) return;
 
-        UpdateAttackFreezeTimer(); // Обновляем таймер заморозки
+        UpdateAttackFreezeTimer();
+        UpdateIdleTimer();
 
-        if (!isAttacking) // Только если не в состоянии атаки
+        if (!isAttacking && !isIdle)
         {
             HandleVision();
             HandleMovement();
             HandleAttack();
+        }
+    }
+
+    protected virtual void UpdateIdleTimer()
+    {
+        if (isIdle)
+        {
+            idleTimer -= Time.deltaTime;
+            if (idleTimer <= 0)
+            {
+                isIdle = false;
+                SetNewWanderTarget();
+            }
         }
     }
 
@@ -87,6 +104,7 @@ public class Enemy : MonoBehaviour
         if (distanceToPlayer <= chaseRange && CanSeePlayer())
         {
             isChasing = true;
+            isIdle = false;
         }
         else if (isChasing && distanceToPlayer > chaseRange * 1.5f)
         {
@@ -107,6 +125,62 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    protected virtual void Wander()
+    {
+        if (isIdle) return;
+
+        MoveToTarget(walkSpeed);
+
+        if (Vector2.Distance(transform.position, targetPosition) < 0.5f)
+        {
+            StartIdle();
+        }
+    }
+
+    protected virtual void StartIdle()
+    {
+        isIdle = true;
+        idleTimer = idleTimeAtPoint;
+        rb.velocity = Vector2.zero;
+        animator.SetBool("Moving_right", false);
+        animator.SetBool("Moving_left", false);
+    }
+
+    protected virtual void SetNewWanderTarget()
+    {
+        Vector2 randomDirection = Random.insideUnitCircle * wanderRadius;
+        targetPosition = (Vector2)transform.position + randomDirection;
+    }
+
+    protected virtual void ChasePlayer()
+    {
+        targetPosition = player.position;
+        MoveToTarget(chaseSpeed);
+    }
+
+    protected virtual void MoveToTarget(float speed)
+    {
+        Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
+        rb.velocity = direction * speed;
+
+        // Управление анимациями направления
+        if (direction.x > 0.1f) // Движение вправо
+        {
+            animator.SetBool("Moving_right", true);
+            animator.SetBool("Moving_left", false);
+        }
+        else if (direction.x < -0.1f) // Движение влево
+        {
+            animator.SetBool("Moving_right", false);
+            animator.SetBool("Moving_left", true);
+        }
+        else // Нет движения по X
+        {
+            animator.SetBool("Moving_right", false);
+            animator.SetBool("Moving_left", false);
+        }
+    }
+
     protected virtual void HandleAttack()
     {
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
@@ -121,54 +195,23 @@ public class Enemy : MonoBehaviour
     {
         isAttacking = true;
         attackFreezeTimer = attackFreezeDuration;
-        rb.velocity = Vector2.zero; // Останавливаем движение
-
+        rb.velocity = Vector2.zero;
         animator.SetTrigger("Attack");
+        animator.SetBool("Moving_right", false);
+        animator.SetBool("Moving_left", false);
+        
+
         if (player.TryGetComponent(out PlayerHealth health))
         {
             health.TakeDamage(damage);
         }
-        // Базовая реализация атаки
     }
 
-    // Остальные методы остаются без изменений
     protected virtual bool CanSeePlayer()
     {
         Vector2 directionToPlayer = (player.position - transform.position).normalized;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, visionRange, visionBlockingLayers);
         return hit.collider == null || hit.collider.CompareTag("player");
-    }
-
-    protected virtual void ChasePlayer()
-    {
-        targetPosition = player.position;
-        MoveToTarget(chaseSpeed);
-    }
-
-    protected virtual void Wander()
-    {
-        if (Time.time >= nextWanderTime)
-        {
-            SetNewWanderTarget();
-        }
-        MoveToTarget(walkSpeed);
-        if (Vector2.Distance(transform.position, targetPosition) < 0.5f)
-        {
-            SetNewWanderTarget();
-        }
-    }
-
-    protected virtual void SetNewWanderTarget()
-    {
-        Vector2 randomDirection = Random.insideUnitCircle * wanderRadius;
-        targetPosition = (Vector2)transform.position + randomDirection;
-        nextWanderTime = Time.time + Random.Range(minWanderDelay, maxWanderDelay);
-    }
-
-    protected virtual void MoveToTarget(float speed)
-    {
-        Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
-        rb.velocity = direction * speed;
     }
 
     public virtual void TakeDamage(int damage)

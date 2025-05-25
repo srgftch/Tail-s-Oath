@@ -3,64 +3,97 @@ using System.Collections;
 
 public class PoisonZone : MonoBehaviour
 {
-    [Header("Визуальные компоненты")]
-    [SerializeField] private SpriteRenderer warningCircle;
-    [SerializeField] private SpriteRenderer poisonEffect;
-    [SerializeField] private Animator animator;
+    [Header("Timing Settings")]
+    private float warningTime;    // Фаза предупреждения
+    private float damageTime;     // Фаза нанесения урона
+    private float fadeOutTime;  // Фаза исчезновения
 
-    private int damage;
-    private float interval;
-    private float duration;
-    private float warningDuration;
+    [Header("Damage Settings")]
+    private int damage = 5;
+    private float damageInterval = 1f;
+
     private bool isActive;
+    private float damageTimer;
+    private CircleCollider2D zoneCollider;
+    protected Animator animator;
 
-    public void Initialize(int dmg, float intvl, float dur, float warning)
+    public void Initialize(int dmg, float intvl, float dur, float warning, float disabling)
     {
+        animator = GetComponent<Animator>();
         damage = dmg;
-        interval = intvl;
-        duration = dur;
-        warningDuration = warning;
+        damageInterval = intvl;
+        damageTime = dur;
+        warningTime = warning;
+        fadeOutTime = disabling;
 
         StartCoroutine(ZoneLifecycle());
     }
 
+    private void Awake()
+    {
+        zoneCollider = GetComponent<CircleCollider2D>();
+        zoneCollider.enabled = false;
+
+    }
+
     private IEnumerator ZoneLifecycle()
     {
-        // Фаза предупреждения
-        warningCircle.enabled = true;
-        poisonEffect.enabled = false;
-        yield return new WaitForSeconds(warningDuration);
+        // === Фаза 1: Предупреждение ===
+        yield return new WaitForSeconds(warningTime);
 
-        // Активация зоны
-        warningCircle.enabled = false;
-        poisonEffect.enabled = true;
-        //animator?.SetTrigger("Activate");
+        // === Фаза 2: Активная зона ===
+        zoneCollider.enabled = true;
         isActive = true;
+        animator.SetBool("Is_active", true);
 
-        // Фаза нанесения урона
-        float activeTime = 0;
-        while (activeTime < duration)
+        float activeTimer = 0;
+        while (activeTimer < damageTime)
         {
-            activeTime += interval;
-            yield return new WaitForSeconds(interval);
+            activeTimer += Time.deltaTime;
+            yield return null;
         }
 
-        // Деактивация
+        // === Фаза 3: Исчезновение ===
         isActive = false;
-        //animator?.SetTrigger("Deactivate");
-        yield return new WaitForSeconds(0.5f); // Анимация исчезновения
+        animator.SetBool("Is_active", false);
+        zoneCollider.enabled = false;
 
+        yield return new WaitForSeconds(fadeOutTime);
         Destroy(gameObject);
     }
 
-    private void OnTriggerStay2D(Collider2D other)
+    private void Update()
     {
-        if (!isActive || !other.CompareTag("player")) return;
+        if (!isActive) return;
 
-        PlayerHealth player = other.GetComponent<PlayerHealth>();
-        if (player != null)
+        damageTimer += Time.deltaTime;
+        if (damageTimer >= damageInterval)
         {
-            player.TakeDamage(damage);
+            damageTimer = 0;
+            ApplyDamage();
         }
+    }
+
+    private void ApplyDamage()
+    {
+        animator.SetTrigger("Attack");
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position,
+            zoneCollider.radius * transform.localScale.x);
+
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("player"))
+            {
+                hit.GetComponent<PlayerHealth>()?.TakeDamage(damage);
+                Debug.Log($"получен урон от зоны");
+            }
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position,
+            GetComponent<CircleCollider2D>().radius * transform.localScale.x);
     }
 }

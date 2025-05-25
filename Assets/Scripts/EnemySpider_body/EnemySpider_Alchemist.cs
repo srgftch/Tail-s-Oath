@@ -9,10 +9,11 @@ public class EnemySpiderAlchemist: Enemy
 
     [Header("Ядовитая жижа")]
     [SerializeField] private GameObject poisonZonePrefab;
-    [SerializeField] private float zoneDuration = 4f;
+    [SerializeField] private float damageTime = 4f;
     [SerializeField] private float damageInterval = 1f;
     [SerializeField] private int zoneDamage = 5;
     [SerializeField] private float warningTime = 1f;
+    [SerializeField] private float fadeOutTime = 0.3f;
     [SerializeField] private float cooldown = 14f;
 
     private float lastAbilityTime;
@@ -52,16 +53,22 @@ public class EnemySpiderAlchemist: Enemy
         PoisonZone zoneScript = zone.GetComponent<PoisonZone>();
         if (zoneScript != null)
         {
-            zoneScript.Initialize(zoneDamage, damageInterval, zoneDuration, warningTime);
+            zoneScript.Initialize(zoneDamage, damageInterval, damageTime, warningTime, fadeOutTime);
         }
 
-        // Анимация применения способности
-        //animator?.SetTrigger("CastAbility");
+
     }
 
     protected override void Attack()
     {
         if (projectilePrefab == null || shootingPoint == null) return;
+
+        isAttacking = true;
+        attackFreezeTimer = attackFreezeDuration;
+        rb.velocity = Vector2.zero;
+        animator.SetTrigger("Attack");
+        animator.SetBool("Moving_right", false);
+        animator.SetBool("Moving_left", false);
 
         // Создаем снаряд
         GameObject projectile = Instantiate(projectilePrefab, shootingPoint.position, Quaternion.identity);
@@ -69,7 +76,7 @@ public class EnemySpiderAlchemist: Enemy
         Physics2D.IgnoreCollision(
             projectile.GetComponent<Collider2D>(),
             GetComponent<Collider2D>()
-        );
+        );  
 
         // Направление к игроку
         Vector2 direction = (player.position - shootingPoint.position).normalized;
@@ -81,8 +88,7 @@ public class EnemySpiderAlchemist: Enemy
             projectileScript.Initialize(direction, projectileSpeed, damage);
         }
 
-        // Анимация атаки (если есть)
-        // animator?.SetTrigger("Attack");
+
     }
 
 

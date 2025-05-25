@@ -16,6 +16,13 @@ public class EnemySpiderShooter : Enemy
     {
         if (projectilePrefab == null || shootingPoint == null) return;
 
+        isAttacking = true;
+        attackFreezeTimer = attackFreezeDuration;
+        rb.velocity = Vector2.zero;
+        animator.SetTrigger("Attack");
+        animator.SetBool("Moving_right", false);
+        animator.SetBool("Moving_left", false);
+
         // Создаем снаряд
         GameObject projectile = Instantiate(projectilePrefab, shootingPoint.position, Quaternion.identity);
         // Игнорировать коллизию снаряда с пауком
