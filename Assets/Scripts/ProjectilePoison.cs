@@ -2,17 +2,17 @@ using UnityEngine;
 
 public class ProjectilePoison : MonoBehaviour
 {
-    // Вложенный класс для обработки отложенного урона
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     private class PoisonDamageHandler : MonoBehaviour
     {
-        private PlayerHealth targetPlayer;
+        private PHealth targetPlayer;
         private int damage;
 
-        public void Initialize(PlayerHealth player, float projectileSpeed, int delayedDamage)
+        public void Initialize(PHealth player, float projectileSpeed, int delayedDamage)
         {
             targetPlayer = player;
             damage = delayedDamage;
-            Invoke("ApplyDelayedDamage", 1f); // Таймер на 1 секунду
+            Invoke("ApplyDelayedDamage", 1f); // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 1 пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         }
 
         private void ApplyDelayedDamage()
@@ -20,9 +20,9 @@ public class ProjectilePoison : MonoBehaviour
             if (targetPlayer != null)
             {
                 targetPlayer.TakeDamage(damage);
-                Debug.Log($"Нанесён отложенный урон: {damage} единиц");
+                Debug.Log($"пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ: {damage} пїЅпїЅпїЅпїЅпїЅпїЅ");
             }
-            Destroy(gameObject); // Уничтожаем обработчик после выполнения
+            Destroy(gameObject); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         }
     }
 
@@ -40,14 +40,14 @@ public class ProjectilePoison : MonoBehaviour
         speed = projectileSpeed;
         damage = projectileDamage;
 
-        // Поворот снаряда в направлении движения
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
     private void Update()
     {
-        // Движение снаряда
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         transform.Translate(direction * speed * Time.deltaTime, Space.World);
     }
 
@@ -55,21 +55,21 @@ public class ProjectilePoison : MonoBehaviour
     {
         if (!collision.CompareTag("player")) return;
 
-        PlayerHealth player = collision.GetComponent<PlayerHealth>();
+        PHealth player = collision.GetComponent<PHealth>();
         if (player == null) return;
 
-        // 1. Наносим мгновенный урон
+        // 1. пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         player.TakeDamage(damage);
-        Debug.Log($"Нанесён мгновенный урон: {damage} единиц");
+        Debug.Log($"пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ: {damage} пїЅпїЅпїЅпїЅпїЅпїЅ");
 
-        // 2. Создаем обработчик для отложенного урона
+        // 2. пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         CreateDamageHandler(player);
 
-        // 3. Уничтожаем снаряд (но обработчик продолжит работу)
+        // 3. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ)
         DestroyProjectile();
     }
 
-    private void CreateDamageHandler(PlayerHealth player)
+    private void CreateDamageHandler(PHealth player)
     {
         GameObject handlerObject = new GameObject("PoisonDamageHandler");
         PoisonDamageHandler handler = handlerObject.AddComponent<PoisonDamageHandler>();
@@ -78,11 +78,11 @@ public class ProjectilePoison : MonoBehaviour
 
     private void DestroyProjectile()
     {
-        // Отключаем визуал и коллайдер
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         GetComponent<SpriteRenderer>().enabled = false;
         GetComponent<Collider2D>().enabled = false;
 
-        // Уничтожаем объект через небольшой запас времени
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Destroy(gameObject, 0.1f);
     }
 

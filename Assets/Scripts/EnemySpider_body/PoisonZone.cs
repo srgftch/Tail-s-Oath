@@ -4,9 +4,9 @@ using System.Collections;
 public class PoisonZone : MonoBehaviour
 {
     [Header("Timing Settings")]
-    private float warningTime;    // Фаза предупреждения
-    private float damageTime;     // Фаза нанесения урона
-    private float fadeOutTime;  // Фаза исчезновения
+    private float warningTime;    // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    private float damageTime;     // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+    private float fadeOutTime;  // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     [Header("Damage Settings")]
     private int damage = 5;
@@ -38,10 +38,10 @@ public class PoisonZone : MonoBehaviour
 
     private IEnumerator ZoneLifecycle()
     {
-        // === Фаза 1: Предупреждение ===
+        // === пїЅпїЅпїЅпїЅ 1: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ===
         yield return new WaitForSeconds(warningTime);
 
-        // === Фаза 2: Активная зона ===
+        // === пїЅпїЅпїЅпїЅ 2: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ ===
         zoneCollider.enabled = true;
         isActive = true;
         animator.SetBool("Is_active", true);
@@ -53,7 +53,7 @@ public class PoisonZone : MonoBehaviour
             yield return null;
         }
 
-        // === Фаза 3: Исчезновение ===
+        // === пїЅпїЅпїЅпїЅ 3: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ===
         isActive = false;
         animator.SetBool("Is_active", false);
         zoneCollider.enabled = false;
@@ -84,8 +84,8 @@ public class PoisonZone : MonoBehaviour
         {
             if (hit.CompareTag("player"))
             {
-                hit.GetComponent<PlayerHealth>()?.TakeDamage(damage);
-                Debug.Log($"получен урон от зоны");
+                hit.GetComponent<PHealth>()?.TakeDamage(damage);
+                Debug.Log($"пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ");
             }
         }
     }

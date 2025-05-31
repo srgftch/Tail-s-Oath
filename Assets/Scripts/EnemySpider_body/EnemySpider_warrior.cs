@@ -16,18 +16,20 @@ public class EnemySpider_warrior: Enemy
 
     protected override void Attack()
     {
-        base.Attack(); // Если нужно сохранить базовое поведение
+        base.Attack(); // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-        if (player != null && player.TryGetComponent(out PlayerHealth playerScript))
+        if (player != null && player.TryGetComponent(out PHealth playerScript))
         {
            // playerScript.TakeDamage(damage);
-            Debug.Log($"Паук-воин атаковал игрока на {damage} урона!");
+            Debug.Log($"пїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ {damage} пїЅпїЅпїЅпїЅпїЅ!");
         }
     }
     protected override void Die()
     {
-        // Добавляем специфичное поведение при смерти паука
-        Debug.Log("Паук-воин умер!");
+        if (player.TryGetComponent(out PExp playerScript))
+        {
+            playerScript.AddExperience(30);
+        }
         base.Die();
     }
 }

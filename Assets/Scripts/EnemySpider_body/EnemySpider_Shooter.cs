@@ -23,27 +23,34 @@ public class EnemySpiderShooter : Enemy
         animator.SetBool("Moving_right", false);
         animator.SetBool("Moving_left", false);
 
-        // Создаем снаряд
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         GameObject projectile = Instantiate(projectilePrefab, shootingPoint.position, Quaternion.identity);
-        // Игнорировать коллизию снаряда с пауком
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         Physics2D.IgnoreCollision(
             projectile.GetComponent<Collider2D>(),
             GetComponent<Collider2D>()
         );
 
-        // Направление к игроку
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         Vector2 direction = (player.position - shootingPoint.position).normalized;
 
-        // Задаем скорость снаряду
+        // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Projectile projectileScript = projectile.GetComponent<Projectile>();
         if (projectileScript != null)
         {
             projectileScript.Initialize(direction, projectileSpeed, damage);
         }
 
-        // Анимация атаки (если есть)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ)
         // animator?.SetTrigger("Attack");
     }
-
+    protected override void Die()
+    {
+        if (player.TryGetComponent(out PExp playerScript))
+        {
+            playerScript.AddExperience(20);
+        }
+        base.Die();
+    }
 
 }

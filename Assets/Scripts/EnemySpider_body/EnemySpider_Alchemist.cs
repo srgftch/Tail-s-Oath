@@ -7,7 +7,7 @@ public class EnemySpiderAlchemist: Enemy
     [SerializeField] private Transform shootingPoint;
     [SerializeField] private float projectileSpeed = 7f;
 
-    [Header("Ядовитая жижа")]
+    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ")]
     [SerializeField] private GameObject poisonZonePrefab;
     [SerializeField] private float damageTime = 4f;
     [SerializeField] private float damageInterval = 1f;
@@ -43,7 +43,7 @@ public class EnemySpiderAlchemist: Enemy
     {
         lastAbilityTime = Time.time;
 
-        // Создаем зону на текущей позиции игрока
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         GameObject zone = Instantiate(
             poisonZonePrefab,
             player.position,
@@ -70,18 +70,18 @@ public class EnemySpiderAlchemist: Enemy
         animator.SetBool("Moving_right", false);
         animator.SetBool("Moving_left", false);
 
-        // Создаем снаряд
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         GameObject projectile = Instantiate(projectilePrefab, shootingPoint.position, Quaternion.identity);
-        // Игнорировать коллизию снаряда с пауком
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         Physics2D.IgnoreCollision(
             projectile.GetComponent<Collider2D>(),
             GetComponent<Collider2D>()
         );  
 
-        // Направление к игроку
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         Vector2 direction = (player.position - shootingPoint.position).normalized;
 
-        // Задаем скорость снаряду
+        // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         ProjectilePoison projectileScript = projectile.GetComponent<ProjectilePoison>();
         if (projectileScript != null)
         {
@@ -91,7 +91,14 @@ public class EnemySpiderAlchemist: Enemy
 
     }
 
-
+    protected override void Die()
+    {
+        if (player.TryGetComponent(out PExp playerScript))
+        {
+            playerScript.AddExperience(20);
+        }
+        base.Die();
+    }
 
 
 }

@@ -14,14 +14,14 @@ public class Projectile : MonoBehaviour
         speed = projectileSpeed;
         damage = projectileDamage;
 
-        // Поворачиваем снаряд в направлении движения
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
     private void Update()
     {
-        // Движение снаряда
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         transform.Translate(direction * speed * Time.deltaTime, Space.World);
     }
 
@@ -29,14 +29,14 @@ public class Projectile : MonoBehaviour
     {
         if (collision.CompareTag("player"))
         {
-            PlayerHealth playerHealth = collision.GetComponent<PlayerHealth>();
+            PHealth playerHealth = collision.GetComponent<PHealth>();
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(damage);
             }
 
-            // Применяем эффект замедления
-            Player player = collision.GetComponent<Player>();
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            Player_control player = collision.GetComponent<Player_control>();
             if (player != null)
             {
                 player.ApplySpiderHit();
@@ -48,7 +48,7 @@ public class Projectile : MonoBehaviour
 
     private void OnBecameInvisible()
     {
-        // Уничтожаем снаряд, если он вышел за границы камеры
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         Destroy(gameObject);
     }
 }

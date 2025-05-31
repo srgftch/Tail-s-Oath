@@ -163,18 +163,18 @@ public class Enemy : MonoBehaviour
         Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
         rb.velocity = direction * speed;
 
-        // Управление анимациями направления
-        if (direction.x > 0.1f) // Движение вправо
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        if (direction.x > 0.1f) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         {
             animator.SetBool("Moving_right", true);
             animator.SetBool("Moving_left", false);
         }
-        else if (direction.x < -0.1f) // Движение влево
+        else if (direction.x < -0.1f) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         {
             animator.SetBool("Moving_right", false);
             animator.SetBool("Moving_left", true);
         }
-        else // Нет движения по X
+        else // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ X
         {
             animator.SetBool("Moving_right", false);
             animator.SetBool("Moving_left", false);
@@ -201,7 +201,7 @@ public class Enemy : MonoBehaviour
         animator.SetBool("Moving_left", false);
         
 
-        if (player.TryGetComponent(out PlayerHealth health))
+        if (player.TryGetComponent(out PHealth health))
         {
             health.TakeDamage(damage);
         }
@@ -218,7 +218,7 @@ public class Enemy : MonoBehaviour
     {
         int modifiedDamage = CalculateModifiedDamage(damage);
         currentHealth -= modifiedDamage;
-        Debug.Log($"Враг получил {modifiedDamage} урона (исходный: {damage}, броня: {armor})!");
+        Debug.Log($"пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ {modifiedDamage} пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {damage}, пїЅпїЅпїЅпїЅпїЅ: {armor})!");
 
         if (healthBar != null) healthBar.value = currentHealth;
         if (currentHealth <= 0) Die();

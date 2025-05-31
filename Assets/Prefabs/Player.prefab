@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 3412843803473991614}
   - component: {fileID: 2557524649321670381}
   - component: {fileID: 743142138111677701}
+  - component: {fileID: 1155102641257349557}
   m_Layer: 0
   m_Name: Player
   m_TagString: player
@@ -63,8 +64,8 @@ Transform:
   m_GameObject: {fileID: 7420467350885603929}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -321.63, y: 103.04965, z: -9.918106}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -670.9, y: -153.7, z: -6.6318}
+  m_LocalScale: {x: 1.3889, y: 1.3889, z: 1.3889}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2381291568618263036}
@@ -257,9 +258,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0277404d69f4dd408c29789b1a64dfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  startSpeed: 8
   canMove: 1
-  reloadPos: 1
+  reloadPos: 0
   animator: {fileID: 4446764631960016003}
   inventoryUI: {fileID: 0}
   ActionUI: {fileID: 0}
@@ -279,7 +280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 2495782478775592942}
   animator: {fileID: 4446764631960016003}
-  attackDamage: 20
+  attackDamage: 30
   attackRange: 1.5
   attackCooldown: 1
   attackPointLeft: {fileID: 2853410847747236567}
@@ -302,6 +303,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sliderHP: {fileID: 0}
+  maxHP: 100
 --- !u!114 &743142138111677701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,6 +316,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1a3cf8d8469a7443a3ca27779afd4ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1155102641257349557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7420467350885603929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b158f60ee3fc04817b34e2e3e5c7dcc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  level: 1
+  experience: 0
+  experienceThresholds: 0a000000140000001e000000
+  sliderExp: {fileID: 0}
+  skillSelectorUI: {fileID: 0}
+  allSkills: []
 --- !u!1 &8064493648092608309
 GameObject:
   m_ObjectHideFlags: 0
@@ -413,7 +433,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 4.791515
+  orthographic size: 7.5574694
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -540,7 +560,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 33031367
-  m_SortingLayer: 4
+  m_SortingLayer: 7
   m_SortingOrder: 0
   m_Sprite: {fileID: -1902168509, guid: 954a525fcbc5496498a216e62d95a1c0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

@@ -280,6 +280,6 @@ public void RollInput(InputAction.CallbackContext context) // инициализ
     }
     public void SpeedUp(int up)
     {
-        speed += up;
+        startSpeed += up;
     }
 }

@@ -10,13 +10,14 @@ public class PExp : MonoBehaviour
     public List<int> experienceThresholds = new List<int> { 10, 20, 30 };
     [SerializeField] private Slider sliderExp;
     [SerializeField] private PSkills skillSelectorUI;
-
+    [SerializeField] private Text lvlv;
 
     public List<Skill> allSkills = new List<Skill>();
 
     public void AddExperience(int amount)
     {
         experience += amount;
+        sliderExp.value = experience;
         Debug.Log("exp");
         CheckLevelUp();
     }
@@ -27,6 +28,7 @@ public class PExp : MonoBehaviour
         {
             experience = 0;
             level++;
+            lvlv.text = "Уровень: " + level ;
             sliderExp.value = 0;
             sliderExp.maxValue = experienceThresholds[level - 1];
             Debug.Log("Level Up! Новый уровень: " + level);
@@ -37,13 +39,14 @@ public class PExp : MonoBehaviour
     private void ShowSkillSelection()
     {
         // Возьмем случайные 3 навыка для выбора
+        
         List<Skill> choices = new List<Skill>();
         while (choices.Count < 3 && allSkills.Count > 0)
         {
             Skill s = allSkills[Random.Range(0, allSkills.Count)];
             if (!choices.Contains(s)) choices.Add(s);
         }
-
+        Debug.Log("skills");
         skillSelectorUI.ShowSkills(choices, OnSkillSelected);
     }
 
